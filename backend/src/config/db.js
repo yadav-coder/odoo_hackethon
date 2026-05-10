@@ -34,6 +34,11 @@ pool.on("error", (error) => {
 });
 
 const connectDB = async () => {
+  if (process.env.SKIP_DB === "true") {
+    logger.warn("PostgreSQL connection skipped because SKIP_DB=true");
+    return;
+  }
+
   try {
     await pool.query("SELECT 1");
     logger.info("PostgreSQL connected");

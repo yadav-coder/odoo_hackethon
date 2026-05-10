@@ -1,0 +1,56 @@
+.skel {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.22);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.35);
+  min-height: 260px;
+  display: grid;
+  grid-template-rows: 152px 1fr;
+}
+
+.skel__media {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.skel__body {
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.skel__line {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.skel__line--short {
+  width: 60%;
+}
+
+.skel__shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.skel__shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-60%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 112, 191, 0.16),
+    transparent
+  );
+  animation: skel 1.2s ease-in-out infinite;
+}
+
+@keyframes skel {
+  to {
+    transform: translateX(60%);
+  }
+}
+
