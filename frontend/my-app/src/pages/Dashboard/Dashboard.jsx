@@ -120,14 +120,8 @@ export default function Dashboard() {
   }, [filters])
 
   useEffect(() => {
-<<<<<<< Updated upstream
-    const id = requestAnimationFrame(() => setPage(1))
-    return () => cancelAnimationFrame(id)
-  }, [debouncedCountry, groupBy, sortBy, sortDir, minRating, maxBudget])
-=======
     setPage(1)
   }, [resetPagingKey])
->>>>>>> Stashed changes
 
   const onPlanNewTrip = () => navigate('/create-trip')
 
