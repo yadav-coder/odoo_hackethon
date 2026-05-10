@@ -8,7 +8,12 @@ const updateProfile = async (req, res, next) => {
   try {
     const payload = {
       name: req.body.name,
-      email: req.body.email
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      phone: req.body.phone,
+      city: req.body.city,
+      country: req.body.country
     };
 
     if (req.file) {
@@ -17,10 +22,7 @@ const updateProfile = async (req, res, next) => {
 
     Object.keys(payload).forEach((key) => payload[key] === undefined && delete payload[key]);
 
-    const user = await User.findByIdAndUpdate(req.user._id, payload, {
-      new: true,
-      runValidators: true
-    });
+    const user = await User.updateById(req.user._id, payload);
 
     res.status(200).json({ success: true, user });
   } catch (error) {

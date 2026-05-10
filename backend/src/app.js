@@ -8,6 +8,11 @@ const tripRoutes = require("./routes/tripRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const itineraryRoutes = require("./routes/itineraryRoutes");
 const userRoutes = require("./routes/userRoutes");
+const packingRoutes = require("./routes/packingRoutes");
+const noteRoutes = require("./routes/noteRoutes");
+const communityRoutes = require("./routes/communityRoutes");
+const invoiceRoutes = require("./routes/invoiceRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 
 const app = express();
@@ -39,6 +44,11 @@ app.use("/api/trips", tripRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/itineraries", itineraryRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/packing", packingRoutes);
+app.use("/api/notes", noteRoutes);
+app.use("/api/community", communityRoutes);
+app.use("/api/invoices", invoiceRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
