@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useId, useMemo, useState } from 'react'
 import { apiFetch } from '../../api/axios'
 import './login.css'
@@ -107,7 +108,14 @@ export default function Login({ onSwitch, onSuccess }) {
                 Register
               </button>
             </p>
-          ) : null}
+          ) : (
+            <p className="login__hint">
+              Don’t have an account?{' '}
+              <Link className="login__link" to="/register">
+                Register
+              </Link>
+            </p>
+          )}
         </form>
       </section>
     </main>

@@ -48,6 +48,29 @@ const wikiSummary = async (title) => {
   return resp.json();
 };
 
+const FALLBACK_PLACES = {
+  india: ["Taj Mahal", "Red Fort", "Jaipur", "Goa Beaches", "Kerala Backwaters", "Hawa Mahal"],
+  japan: ["Tokyo Tower", "Fushimi Inari Shrine", "Mount Fuji", "Arashiyama Bamboo Grove", "Senso-ji", "Dotonbori"],
+  france: ["Eiffel Tower", "Louvre Museum", "Mont Saint-Michel", "Palace of Versailles", "Nice Promenade", "Arc de Triomphe"],
+  indonesia: ["Bali", "Ubud", "Borobudur Temple", "Gili Islands", "Komodo National Park", "Tanah Lot"],
+  uae: ["Dubai Marina", "Burj Khalifa", "Palm Jumeirah", "Dubai Mall", "Sheikh Zayed Mosque", "Desert Safari"]
+};
+
+const buildFallbackList = (country, count) => {
+  const key = country.toLowerCase();
+  const picks = FALLBACK_PLACES[key] || [];
+  const out = [];
+  for (const p of picks) out.push(p);
+  while (out.length < count) out.push(`${country} Landmark ${out.length + 1}`);
+  return out.slice(0, count).map((title) =>
+    buildDestination({
+      title,
+      country,
+      summary: null
+    })
+  );
+};
+
 const buildDestination = ({ title, country, summary }) => {
   const seed = hashToInt(`${country}:${title}`);
   const rating = Math.round((3.6 + (seed % 130) / 100) * 10) / 10; // 3.6 - 4.9
@@ -108,10 +131,10 @@ const groupItems = (items, groupBy) => {
   };
 };
 
-const getDestinations = async (req, res) => {
-  const country = String(req.query.country || "").trim();
+const resolveParams = (req) => {
+  const country = String(req.query.country || req.query.q || "").trim();
   if (!country) {
-    return res.status(400).json({ success: false, message: "country is required" });
+    return { error: { status: 400, message: "country (or q) is required" } };
   }
 
   const page = clamp(Number(req.query.page) || 1, 1, 9999);
@@ -126,18 +149,46 @@ const getDestinations = async (req, res) => {
     ? String(req.query.groupBy)
     : "none";
 
+  return {
+    country,
+    page,
+    limit,
+    minRating,
+    maxBudget,
+    sortBy,
+    sortDir,
+    groupBy
+  };
+};
+
+const getDestinations = async (req, res) => {
+  const params = resolveParams(req);
+  if (params.error) {
+    return res.status(params.error.status).json({ success: false, message: params.error.message });
+  }
+  const { country, page, limit, minRating, maxBudget, sortBy, sortDir, groupBy } = params;
+
   const cacheKey = `destinations:${country.toLowerCase()}`;
   let base = getCached(cacheKey);
 
   try {
     if (!base) {
-      const titles = await wikiSearch(`tourist attractions in ${country}`, 18);
-      const uniqueTitles = Array.from(new Set(titles)).slice(0, 18);
+      let uniqueTitles = [];
+      try {
+        const titles = await wikiSearch(`tourist attractions in ${country}`, 18);
+        uniqueTitles = Array.from(new Set(titles)).slice(0, 18);
+      } catch (e) {
+        uniqueTitles = [];
+      }
 
-      const summaries = await Promise.all(uniqueTitles.map((t) => wikiSummary(t)));
-      base = uniqueTitles.map((title, idx) =>
-        buildDestination({ title, country, summary: summaries[idx] })
-      );
+      if (uniqueTitles.length > 0) {
+        const summaries = await Promise.all(uniqueTitles.map((t) => wikiSummary(t)));
+        base = uniqueTitles.map((title, idx) =>
+          buildDestination({ title, country, summary: summaries[idx] })
+        );
+      } else {
+        base = buildFallbackList(country, 18);
+      }
       setCached(cacheKey, base);
     }
 
@@ -172,14 +223,31 @@ const getDestinations = async (req, res) => {
       data: grouped.groups ? { groups: grouped.groups } : { items: pageItems }
     });
   } catch (err) {
-    return res.status(500).json({
-      success: false,
-      message: err.message || "Failed to fetch destinations"
+    // Never hard-fail the dashboard: return fallback data.
+    const fallback = buildFallbackList(country, limit);
+    return res.status(200).json({
+      success: true,
+      meta: {
+        country,
+        page: 1,
+        limit,
+        total: fallback.length,
+        hasMore: false,
+        sortBy,
+        sortDir,
+        minRating: Number.isFinite(minRating) ? minRating : null,
+        maxBudget: Number.isFinite(maxBudget) ? maxBudget : null,
+        groupBy,
+        warning: err.message || "External fetch failed; served fallback data"
+      },
+      data: { items: fallback }
     });
   }
 };
 
 module.exports = {
-  getDestinations
+  getDestinations,
+  searchDestinations: getDestinations,
+  filterDestinations: getDestinations,
+  groupDestinations: getDestinations
 };
-

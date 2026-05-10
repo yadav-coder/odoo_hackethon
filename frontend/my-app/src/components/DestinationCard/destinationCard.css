@@ -21,6 +21,7 @@
 
 .dest__media {
   position: relative;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .dest__img {
@@ -116,4 +117,3 @@
   font-weight: 650;
   color: rgba(255, 255, 255, 0.9);
 }
-

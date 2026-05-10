@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { fetchDestinations } from '../../api/destinationApi'
 import { fetchPreviousTrips } from '../../api/previousTripsApi'
 import SearchBar from '../../components/SearchBar/SearchBar'
@@ -7,19 +8,28 @@ import TripCard from '../../components/TripCard/TripCard'
 import SkeletonCard from '../../components/Loader/SkeletonCard'
 import { formatCurrency, formatDateRange } from '../../utils/helpers'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
+import { useDashboardContext } from '../../context/DashboardContext'
 import './dashboard.css'
 
-const DEFAULT_COUNTRY = 'India'
-
 export default function Dashboard() {
-  const [countryQuery, setCountryQuery] = useState(DEFAULT_COUNTRY)
-  const debouncedCountry = useDebouncedValue(countryQuery, 450)
+  const navigate = useNavigate()
+  const {
+    countryQuery,
+    setCountryQuery,
+    groupBy,
+    setGroupBy,
+    sortBy,
+    setSortBy,
+    sortDir,
+    setSortDir,
+    minRating,
+    setMinRating,
+    maxBudget,
+    setMaxBudget,
+    resetPagingKey,
+  } = useDashboardContext()
 
-  const [groupBy, setGroupBy] = useState('none')
-  const [sortBy, setSortBy] = useState('rating')
-  const [sortDir, setSortDir] = useState('desc')
-  const [minRating, setMinRating] = useState('')
-  const [maxBudget, setMaxBudget] = useState('')
+  const debouncedCountry = useDebouncedValue(countryQuery, 450)
 
   const [page, setPage] = useState(1)
   const [destinations, setDestinations] = useState([])
@@ -110,14 +120,16 @@ export default function Dashboard() {
   }, [filters])
 
   useEffect(() => {
+<<<<<<< Updated upstream
     const id = requestAnimationFrame(() => setPage(1))
     return () => cancelAnimationFrame(id)
   }, [debouncedCountry, groupBy, sortBy, sortDir, minRating, maxBudget])
+=======
+    setPage(1)
+  }, [resetPagingKey])
+>>>>>>> Stashed changes
 
-  const onPlanNewTrip = () => {
-    const el = document.getElementById('top-regional')
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
+  const onPlanNewTrip = () => navigate('/create-trip')
 
   return (
     <div className="dash">

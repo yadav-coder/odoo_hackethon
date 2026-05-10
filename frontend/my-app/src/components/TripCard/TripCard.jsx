@@ -1,10 +1,24 @@
 import './tripCard.css'
 
+const FALLBACK_IMG =
+  'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=60'
+
 export default function TripCard({ trip }) {
   return (
     <article className="trip">
       <div className="trip__media">
-        <img className="trip__img" src={trip.imageUrl} alt={trip.destination} loading="lazy" />
+        <img
+          className="trip__img"
+          src={trip.imageUrl || FALLBACK_IMG}
+          alt={trip.destination}
+          loading="lazy"
+          decoding="async"
+          onError={(e) => {
+            if (e.currentTarget.dataset.fallback) return
+            e.currentTarget.dataset.fallback = '1'
+            e.currentTarget.src = FALLBACK_IMG
+          }}
+        />
         <div className="trip__overlay" aria-hidden="true" />
         <span className={`trip__status trip__status--${trip.status || 'completed'}`}>
           {String(trip.status || 'completed')}
@@ -36,4 +50,3 @@ export default function TripCard({ trip }) {
     </article>
   )
 }
-

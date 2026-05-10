@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import { useState } from 'react'
 import Dashboard from './pages/Dashboard/Dashboard.jsx'
 import Login from './pages/Login/Login.jsx'
@@ -15,4 +16,15 @@ export default function App() {
   }
 
   return <Login onSwitch={() => setAuthView('register')} onSuccess={() => setAuthView('dashboard')} />
+=======
+import AppRoutes from './routes/AppRoutes.jsx'
+import { DashboardProvider } from './context/DashboardContext.jsx'
+
+export default function App() {
+  return (
+    <DashboardProvider>
+      <AppRoutes />
+    </DashboardProvider>
+  )
+>>>>>>> Stashed changes
 }

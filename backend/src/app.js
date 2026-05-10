@@ -15,14 +15,17 @@ const invoiceRoutes = require("./routes/invoiceRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const destinationRoutes = require("./routes/destinationRoutes");
 const previousTripRoutes = require("./routes/previousTripRoutes");
+const suggestionRoutes = require("./routes/suggestionRoutes");
+const itineraryPublicRoutes = require("./routes/itineraryPublicRoutes");
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 
 const app = express();
 
+const clientOrigin = process.env.CLIENT_URL;
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "*",
-    credentials: true
+    origin: clientOrigin || true,
+    credentials: Boolean(clientOrigin)
   })
 );
 app.use(express.json());
@@ -43,7 +46,9 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/destinations", destinationRoutes);
+app.use("/api/suggestions", suggestionRoutes);
 app.use("/api/previous-trips", previousTripRoutes);
+app.use("/api/itinerary", itineraryPublicRoutes);
 app.use("/api/trips", tripRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/itineraries", itineraryRoutes);
