@@ -1,27 +1,14 @@
 const Trip = require("../models/tripModel");
-const ApiFeatures = require("../utils/apiFeatures");
 
-const createTrip = (userId, payload) => Trip.create({ ...payload, user: userId });
+const createTrip = (userId, payload) => Trip.create(userId, payload);
 
-const getTrips = async (userId, queryString) => {
-  const features = new ApiFeatures(Trip.find({ user: userId }), queryString)
-    .search(["title", "destination"])
-    .sort()
-    .paginate();
+const getTrips = (userId, queryString) => Trip.findByUser(userId, queryString);
 
-  return features.query;
-};
+const getTripById = (tripId, userId) => Trip.findByIdForUser(tripId, userId);
 
-const getTripById = (tripId, userId) => Trip.findOne({ _id: tripId, user: userId });
+const updateTrip = (tripId, userId, payload) => Trip.updateForUser(tripId, userId, payload);
 
-const updateTrip = (tripId, userId, payload) => {
-  return Trip.findOneAndUpdate({ _id: tripId, user: userId }, payload, {
-    new: true,
-    runValidators: true
-  });
-};
-
-const deleteTrip = (tripId, userId) => Trip.findOneAndDelete({ _id: tripId, user: userId });
+const deleteTrip = (tripId, userId) => Trip.deleteForUser(tripId, userId);
 
 module.exports = {
   createTrip,

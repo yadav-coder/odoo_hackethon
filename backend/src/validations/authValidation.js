@@ -1,5 +1,4 @@
 const registerValidation = {
-  name: { required: true },
   email: { required: true, isEmail: true },
   password: { required: true, minLength: 6 }
 };

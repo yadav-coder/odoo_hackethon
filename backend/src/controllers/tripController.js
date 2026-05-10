@@ -9,7 +9,7 @@ const createTrip = async (req, res, next) => {
       payload.coverImage = `/uploads/trips/${req.file.filename}`;
     }
 
-    const trip = await tripService.createTrip(req.user._id, payload);
+    const trip = await tripService.createTrip(req.user.id, payload);
     res.status(201).json({ success: true, trip });
   } catch (error) {
     next(error);
@@ -18,7 +18,7 @@ const createTrip = async (req, res, next) => {
 
 const getTrips = async (req, res, next) => {
   try {
-    const trips = await tripService.getTrips(req.user._id, req.query);
+    const trips = await tripService.getTrips(req.user.id, req.query);
     res.status(200).json({ success: true, count: trips.length, trips });
   } catch (error) {
     next(error);
@@ -27,7 +27,7 @@ const getTrips = async (req, res, next) => {
 
 const getTrip = async (req, res, next) => {
   try {
-    const trip = await tripService.getTripById(req.params.id, req.user._id);
+    const trip = await tripService.getTripById(req.params.id, req.user.id);
 
     if (!trip) {
       res.status(404).json({ success: false, message: "Trip not found" });
@@ -48,7 +48,7 @@ const updateTrip = async (req, res, next) => {
       payload.coverImage = `/uploads/trips/${req.file.filename}`;
     }
 
-    const trip = await tripService.updateTrip(req.params.id, req.user._id, payload);
+    const trip = await tripService.updateTrip(req.params.id, req.user.id, payload);
 
     if (!trip) {
       res.status(404).json({ success: false, message: "Trip not found" });
@@ -63,7 +63,7 @@ const updateTrip = async (req, res, next) => {
 
 const deleteTrip = async (req, res, next) => {
   try {
-    const trip = await tripService.deleteTrip(req.params.id, req.user._id);
+    const trip = await tripService.deleteTrip(req.params.id, req.user.id);
 
     if (!trip) {
       res.status(404).json({ success: false, message: "Trip not found" });
@@ -93,4 +93,3 @@ module.exports = {
   deleteTrip,
   getRecommendations
 };
-

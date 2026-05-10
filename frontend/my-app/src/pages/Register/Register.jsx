@@ -1,4 +1,5 @@
 import { useId, useMemo, useState } from 'react'
+import { apiFetch } from '../../api/axios'
 import './register.css'
 
 export default function Register({ onSwitch }) {
@@ -9,35 +10,77 @@ export default function Register({ onSwitch }) {
   const cityId = useId()
   const countryId = useId()
   const infoId = useId()
+  const passwordId = useId()
 
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
     email: '',
+    password: '',
     phone: '',
     city: '',
     country: '',
     info: '',
   })
+  const [status, setStatus] = useState({ type: '', message: '' })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const canSubmit = useMemo(() => {
     return (
       form.firstName.trim().length > 0 &&
       form.lastName.trim().length > 0 &&
-      form.email.trim().length > 0
+      form.email.trim().length > 0 &&
+      form.password.trim().length > 0
     )
-  }, [form.email, form.firstName, form.lastName])
+  }, [form.email, form.firstName, form.lastName, form.password])
 
   function onChange(e) {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
-  function onSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault()
-    // Demo-only: wire this to your register API later.
-    // eslint-disable-next-line no-console
-    console.log('Register submit:', form)
+    setStatus({ type: '', message: '' })
+    setIsSubmitting(true)
+
+    try {
+      const data = await apiFetch('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          firstName: form.firstName,
+          lastName: form.lastName,
+          name: `${form.firstName} ${form.lastName}`,
+          email: form.email,
+          password: form.password,
+          phone: form.phone,
+          city: form.city,
+          country: form.country,
+        }),
+      })
+
+      if (data.success) {
+        localStorage.setItem('token', data.token)
+        setStatus({ type: 'success', message: 'Registration successful. You can log in now.' })
+        setForm({
+          firstName: '',
+          lastName: '',
+          email: '',
+          password: '',
+          phone: '',
+          city: '',
+          country: '',
+          info: '',
+        })
+      } else {
+        setStatus({ type: 'error', message: data.message || 'Registration failed' })
+      }
+    } catch (error) {
+      console.error('Error during registration:', error)
+      setStatus({ type: 'error', message: error.message || 'Registration failed' })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -151,6 +194,22 @@ export default function Register({ onSwitch }) {
                 onChange={onChange}
               />
             </div>
+
+        <div className="register__field">
+          <label className="register__label" htmlFor={passwordId}>
+            Password
+          </label>
+          <input
+            id={passwordId}
+            className="register__input"
+            name="password"
+            type="password"
+            autoComplete="new-password"
+            placeholder="Password"
+            value={form.password}
+            onChange={onChange}
+          />
+        </div>
           </div>
 
           <div className="register__field">
@@ -168,8 +227,14 @@ export default function Register({ onSwitch }) {
             />
           </div>
 
-          <button className="register__button" type="submit" disabled={!canSubmit}>
-            Register Users
+          {status.message ? (
+            <p className={`register__status register__status--${status.type}`} role="status">
+              {status.message}
+            </p>
+          ) : null}
+
+          <button className="register__button" type="submit" disabled={!canSubmit || isSubmitting}>
+            {isSubmitting ? 'Registering...' : 'Register Users'}
           </button>
 
           {onSwitch ? (
@@ -185,4 +250,3 @@ export default function Register({ onSwitch }) {
     </main>
   )
 }
-

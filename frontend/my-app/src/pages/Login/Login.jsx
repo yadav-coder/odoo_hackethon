@@ -1,11 +1,14 @@
 import { useId, useMemo, useState } from 'react'
+import { apiFetch } from '../../api/axios'
 import './login.css'
 
-export default function Login({ onSwitch }) {
+export default function Login({ onSwitch, onSuccess }) {
   const usernameId = useId()
   const passwordId = useId()
 
   const [form, setForm] = useState({ username: '', password: '' })
+  const [status, setStatus] = useState({ type: '', message: '' })
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const canSubmit = useMemo(() => {
     return form.username.trim().length > 0 && form.password.trim().length > 0
   }, [form.password, form.username])
@@ -15,11 +18,33 @@ export default function Login({ onSwitch }) {
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
-  function onSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault()
-    // Demo-only: wire this to your auth API later.
-    // eslint-disable-next-line no-console
-    console.log('Login submit:', { username: form.username })
+    setStatus({ type: '', message: '' })
+    setIsSubmitting(true)
+
+    try {
+      const data = await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: form.username, // using the username field as email
+          password: form.password,
+        }),
+      })
+
+      if (data.success) {
+        localStorage.setItem('token', data.token) // Save token for future API calls
+        setStatus({ type: 'success', message: 'Login successful.' })
+        onSuccess?.()
+      } else {
+        setStatus({ type: 'error', message: data.message || 'Login failed' })
+      }
+    } catch (error) {
+      console.error('Error during login:', error)
+      setStatus({ type: 'error', message: error.message || 'Login failed' })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -65,13 +90,19 @@ export default function Login({ onSwitch }) {
             onChange={onChange}
           />
 
-          <button className="login__button" type="submit" disabled={!canSubmit}>
-            Login
+          {status.message ? (
+            <p className={`login__status login__status--${status.type}`} role="status">
+              {status.message}
+            </p>
+          ) : null}
+
+          <button className="login__button" type="submit" disabled={!canSubmit || isSubmitting}>
+            {isSubmitting ? 'Logging in...' : 'Login'}
           </button>
 
           {onSwitch ? (
             <p className="login__hint">
-              Don’t have an account?{' '}
+              Don't have an account?{' '}
               <button className="login__link" type="button" onClick={onSwitch}>
                 Register
               </button>

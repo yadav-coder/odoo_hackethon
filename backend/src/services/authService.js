@@ -1,8 +1,8 @@
 const User = require("../models/userModel");
 const generateToken = require("../utils/generateToken");
 
-const registerUser = async ({ name, email, password }) => {
-  const existingUser = await User.findOne({ email });
+const registerUser = async ({ name, firstName, lastName, email, password, phone, city, country }) => {
+  const existingUser = await User.findByEmail(email);
 
   if (existingUser) {
     const error = new Error("User already exists");
@@ -10,16 +10,33 @@ const registerUser = async ({ name, email, password }) => {
     throw error;
   }
 
-  const user = await User.create({ name, email, password });
+  const displayName = name || [firstName, lastName].filter(Boolean).join(" ").trim();
+
+  if (!displayName) {
+    const error = new Error("Name is required");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const user = await User.create({
+    name: displayName,
+    firstName,
+    lastName,
+    email,
+    password,
+    phone,
+    city,
+    country
+  });
 
   return {
     user,
-    token: generateToken(user._id)
+    token: generateToken(user.id || user._id)
   };
 };
 
 const loginUser = async ({ email, password }) => {
-  const user = await User.findOne({ email }).select("+password");
+  const user = await User.findByEmail(email, true);
 
   if (!user || !(await user.matchPassword(password))) {
     const error = new Error("Invalid email or password");
@@ -29,7 +46,7 @@ const loginUser = async ({ email, password }) => {
 
   return {
     user,
-    token: generateToken(user._id)
+    token: generateToken(user.id || user._id)
   };
 };
 
@@ -37,4 +54,3 @@ module.exports = {
   registerUser,
   loginUser
 };
-

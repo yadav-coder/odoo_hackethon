@@ -17,10 +17,12 @@ const updateProfile = async (req, res, next) => {
 
     Object.keys(payload).forEach((key) => payload[key] === undefined && delete payload[key]);
 
-    const user = await User.findByIdAndUpdate(req.user._id, payload, {
-      new: true,
-      runValidators: true
-    });
+    const user = await User.updateProfile(req.user.id, payload);
+
+    if (!user) {
+      res.status(404).json({ success: false, message: "User not found" });
+      return;
+    }
 
     res.status(200).json({ success: true, user });
   } catch (error) {
@@ -32,4 +34,3 @@ module.exports = {
   getProfile,
   updateProfile
 };
-
