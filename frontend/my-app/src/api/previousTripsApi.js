@@ -1,10 +1,10 @@
-import { api } from './axios'
+import { apiFetch } from './axios'
 import { mockPreviousTrips } from '../utils/mockData'
 
 export async function fetchPreviousTrips() {
   try {
-    const res = await api.get('/previous-trips')
-    return res?.data?.data || []
+    const data = await apiFetch('/previous-trips')
+    return data?.data || []
   } catch {
     return mockPreviousTrips
   }

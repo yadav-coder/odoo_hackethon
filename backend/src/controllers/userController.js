@@ -6,22 +6,23 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res, next) => {
   try {
-    const payload = {
-      name: req.body.name,
-      email: req.body.email
-    };
+    const allowed = ["firstName", "lastName", "email", "phone", "city", "country"];
+    const payload = {};
+
+    for (const key of allowed) {
+      if (req.body[key] !== undefined) {
+        payload[key] = req.body[key];
+      }
+    }
 
     if (req.file) {
       payload.avatar = `/uploads/profile/${req.file.filename}`;
     }
 
-    Object.keys(payload).forEach((key) => payload[key] === undefined && delete payload[key]);
-
     const user = await User.updateProfile(req.user.id, payload);
 
     if (!user) {
-      res.status(404).json({ success: false, message: "User not found" });
-      return;
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
     res.status(200).json({ success: true, user });
@@ -30,7 +31,4 @@ const updateProfile = async (req, res, next) => {
   }
 };
 
-module.exports = {
-  getProfile,
-  updateProfile
-};
+module.exports = { getProfile, updateProfile };

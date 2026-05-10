@@ -25,7 +25,7 @@ const clientOrigin = process.env.CLIENT_URL;
 app.use(
   cors({
     origin: clientOrigin || true,
-    credentials: Boolean(clientOrigin)
+    credentials: Boolean(clientOrigin),
   })
 );
 app.use(express.json());
@@ -35,12 +35,13 @@ if (process.env.NODE_ENV !== "test") {
   app.use(morgan("dev"));
 }
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "TraveEaseloop API is running"
+    message: "Traveloop API is running",
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -63,4 +64,3 @@ app.use(notFound);
 app.use(errorHandler);
 
 module.exports = app;
-

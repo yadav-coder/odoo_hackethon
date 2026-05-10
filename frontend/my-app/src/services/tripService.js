@@ -1,7 +1,13 @@
-import { api } from '../api/axios'
+import { apiFetch } from '../api/axios'
 
 export async function createTrip(payload) {
-  const res = await api.post('/trips/create', payload)
-  return res?.data
+  return apiFetch('/trips', {
+    method: 'POST',
+    body: JSON.stringify({
+      destination: payload.destination,
+      startDate: payload.startDate,
+      endDate: payload.endDate,
+      title: payload.destination,
+    }),
+  })
 }
-

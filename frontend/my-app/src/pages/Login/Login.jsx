@@ -1,18 +1,22 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useId, useMemo, useState } from 'react'
-import { apiFetch } from '../../api/axios'
+import { useAuth } from '../../context/AuthContext'
 import './login.css'
 
-export default function Login({ onSwitch, onSuccess }) {
-  const usernameId = useId()
+export default function Login() {
+  const navigate = useNavigate()
+  const { login } = useAuth()
+  const emailId = useId()
   const passwordId = useId()
 
-  const [form, setForm] = useState({ username: '', password: '' })
+  const [form, setForm] = useState({ email: '', password: '' })
   const [status, setStatus] = useState({ type: '', message: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const canSubmit = useMemo(() => {
-    return form.username.trim().length > 0 && form.password.trim().length > 0
-  }, [form.password, form.username])
+
+  const canSubmit = useMemo(
+    () => form.email.trim().length > 0 && form.password.trim().length > 0,
+    [form.email, form.password]
+  )
 
   function onChange(e) {
     const { name, value } = e.target
@@ -25,24 +29,11 @@ export default function Login({ onSwitch, onSuccess }) {
     setIsSubmitting(true)
 
     try {
-      const data = await apiFetch('/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({
-          email: form.username, // using the username field as email
-          password: form.password,
-        }),
-      })
-
-      if (data.success) {
-        localStorage.setItem('token', data.token) // Save token for future API calls
-        setStatus({ type: 'success', message: 'Login successful.' })
-        onSuccess?.()
-      } else {
-        setStatus({ type: 'error', message: data.message || 'Login failed' })
-      }
+      await login(form.email, form.password)
+      setStatus({ type: 'success', message: 'Login successful! Redirecting...' })
+      setTimeout(() => navigate('/'), 600)
     } catch (error) {
-      console.error('Error during login:', error)
-      setStatus({ type: 'error', message: error.message || 'Login failed' })
+      setStatus({ type: 'error', message: error.message || 'Login failed. Check your credentials.' })
     } finally {
       setIsSubmitting(false)
     }
@@ -54,42 +45,39 @@ export default function Login({ onSwitch, onSuccess }) {
 
       <section className="login__card" aria-label="Login">
         <header className="login__header">
-          <p className="login__eyebrow">Traveloop</p>
-          <h1 className="login__title">Login</h1>
+          <p className="login__eyebrow">✈️ Traveloop</p>
+          <h1 className="login__title">Welcome Back</h1>
+          <p className="login__sub">Sign in to continue planning your adventures</p>
         </header>
 
-        <div className="login__avatar" aria-hidden="true">
-          <div className="login__avatarInner">TL</div>
-        </div>
-
         <form className="login__form" onSubmit={onSubmit}>
-          <label className="login__label" htmlFor={usernameId}>
-            Username
-          </label>
-          <input
-            id={usernameId}
-            className="login__input"
-            name="username"
-            type="text"
-            autoComplete="username"
-            placeholder="Enter username"
-            value={form.username}
-            onChange={onChange}
-          />
+          <div className="login__field">
+            <label className="login__label" htmlFor={emailId}>Email Address</label>
+            <input
+              id={emailId}
+              className="login__input"
+              name="email"
+              type="email"
+              autoComplete="email"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={onChange}
+            />
+          </div>
 
-          <label className="login__label" htmlFor={passwordId}>
-            Password
-          </label>
-          <input
-            id={passwordId}
-            className="login__input"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            placeholder="Enter password"
-            value={form.password}
-            onChange={onChange}
-          />
+          <div className="login__field">
+            <label className="login__label" htmlFor={passwordId}>Password</label>
+            <input
+              id={passwordId}
+              className="login__input"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              placeholder="••••••••"
+              value={form.password}
+              onChange={onChange}
+            />
+          </div>
 
           {status.message ? (
             <p className={`login__status login__status--${status.type}`} role="status">
@@ -98,24 +86,13 @@ export default function Login({ onSwitch, onSuccess }) {
           ) : null}
 
           <button className="login__button" type="submit" disabled={!canSubmit || isSubmitting}>
-            {isSubmitting ? 'Logging in...' : 'Login'}
+            {isSubmitting ? 'Signing in...' : 'Sign In'}
           </button>
 
-          {onSwitch ? (
-            <p className="login__hint">
-              Don't have an account?{' '}
-              <button className="login__link" type="button" onClick={onSwitch}>
-                Register
-              </button>
-            </p>
-          ) : (
-            <p className="login__hint">
-              Don’t have an account?{' '}
-              <Link className="login__link" to="/register">
-                Register
-              </Link>
-            </p>
-          )}
+          <p className="login__hint">
+            Don&apos;t have an account?{' '}
+            <Link className="login__link" to="/register">Create one</Link>
+          </p>
         </form>
       </section>
     </main>
