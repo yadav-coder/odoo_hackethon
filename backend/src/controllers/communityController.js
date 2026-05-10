@@ -2,7 +2,7 @@ const CommunityPost = require("../models/communityModel");
 
 const createPost = async (req, res, next) => {
   try {
-    const post = await CommunityPost.create(req.user._id, req.body);
+    const post = await CommunityPost.create(req.user.id, req.body);
     res.status(201).json({ success: true, post });
   } catch (error) {
     next(error);
@@ -20,7 +20,7 @@ const getPosts = async (req, res, next) => {
 
 const updatePost = async (req, res, next) => {
   try {
-    const post = await CommunityPost.updateForUser(req.params.id, req.user._id, req.body);
+    const post = await CommunityPost.updateForUser(req.params.id, req.user.id, req.body);
 
     if (!post) {
       res.status(404).json({ success: false, message: "Community post not found" });
@@ -35,7 +35,7 @@ const updatePost = async (req, res, next) => {
 
 const deletePost = async (req, res, next) => {
   try {
-    const post = await CommunityPost.deleteForUser(req.params.id, req.user._id);
+    const post = await CommunityPost.deleteForUser(req.params.id, req.user.id);
 
     if (!post) {
       res.status(404).json({ success: false, message: "Community post not found" });

@@ -8,16 +8,13 @@ const tripRoutes = require("./routes/tripRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const itineraryRoutes = require("./routes/itineraryRoutes");
 const userRoutes = require("./routes/userRoutes");
-<<<<<<< HEAD
 const packingRoutes = require("./routes/packingRoutes");
 const noteRoutes = require("./routes/noteRoutes");
 const communityRoutes = require("./routes/communityRoutes");
 const invoiceRoutes = require("./routes/invoiceRoutes");
 const adminRoutes = require("./routes/adminRoutes");
-=======
 const destinationRoutes = require("./routes/destinationRoutes");
 const previousTripRoutes = require("./routes/previousTripRoutes");
->>>>>>> e91877276dad102236aa2fa4778844598a7a0611
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 
 const app = express();

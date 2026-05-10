@@ -2,7 +2,7 @@ const expenseService = require("../services/expenseService");
 
 const createExpense = async (req, res, next) => {
   try {
-    const expense = await expenseService.createExpense(req.user._id, req.body);
+    const expense = await expenseService.createExpense(req.user.id, req.body);
     res.status(201).json({ success: true, expense });
   } catch (error) {
     next(error);
@@ -11,7 +11,7 @@ const createExpense = async (req, res, next) => {
 
 const getExpenses = async (req, res, next) => {
   try {
-    const expenses = await expenseService.getExpenses(req.user._id, req.query.trip);
+    const expenses = await expenseService.getExpenses(req.user.id, req.query.trip);
     res.status(200).json({ success: true, count: expenses.length, expenses });
   } catch (error) {
     next(error);
@@ -20,7 +20,7 @@ const getExpenses = async (req, res, next) => {
 
 const updateExpense = async (req, res, next) => {
   try {
-    const expense = await expenseService.updateExpense(req.params.id, req.user._id, req.body);
+    const expense = await expenseService.updateExpense(req.params.id, req.user.id, req.body);
 
     if (!expense) {
       res.status(404).json({ success: false, message: "Expense not found" });
@@ -35,7 +35,7 @@ const updateExpense = async (req, res, next) => {
 
 const deleteExpense = async (req, res, next) => {
   try {
-    const expense = await expenseService.deleteExpense(req.params.id, req.user._id);
+    const expense = await expenseService.deleteExpense(req.params.id, req.user.id);
 
     if (!expense) {
       res.status(404).json({ success: false, message: "Expense not found" });
@@ -54,4 +54,3 @@ module.exports = {
   updateExpense,
   deleteExpense
 };
-

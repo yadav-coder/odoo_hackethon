@@ -5,7 +5,7 @@ const sendAuthResponse = (res, statusCode, data) => {
     success: true,
     token: data.token,
     user: {
-      id: data.user._id,
+      id: data.user.id || data.user._id,
       name: data.user.name,
       firstName: data.user.firstName,
       lastName: data.user.lastName,
@@ -49,4 +49,3 @@ module.exports = {
   login,
   me
 };
-

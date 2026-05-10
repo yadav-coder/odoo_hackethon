@@ -28,106 +28,67 @@ const create = async (userId, payload) => {
      RETURNING *`,
     [
       userId,
-      payload.title,
-      payload.destination,
+      payload.title ?? null,
+      payload.destination ?? null,
       payload.description || "",
-      payload.startDate,
-      payload.endDate,
+      payload.startDate ?? null,
+      payload.endDate ?? null,
       payload.budget || 0,
-      payload.coverImage || ""
+      payload.coverImage ?? null
     ]
   );
-
   return mapTrip(result.rows[0]);
 };
 
-const findByUser = async (userId, queryString = {}) => {
-  const values = [userId];
-  const where = ["user_id = $1"];
-
-  if (queryString.keyword) {
-    values.push(`%${queryString.keyword}%`);
-    where.push(`(title ILIKE $${values.length} OR destination ILIKE $${values.length})`);
-  }
-
-  const allowedSorts = new Map([
-    ["createdAt", "created_at"],
-    ["startDate", "start_date"],
-    ["endDate", "end_date"],
-    ["budget", "budget"],
-    ["title", "title"],
-    ["destination", "destination"]
-  ]);
-  const sortParts = String(queryString.sort || "-createdAt")
-    .split(",")
-    .map((part) => {
-      const direction = part.startsWith("-") ? "DESC" : "ASC";
-      const field = part.replace(/^-/, "");
-      const column = allowedSorts.get(field);
-      return column ? `${column} ${direction}` : null;
-    })
-    .filter(Boolean);
-  const orderBy = sortParts.length > 0 ? sortParts.join(", ") : "created_at DESC";
-  const page = Math.max(Number(queryString.page) || 1, 1);
-  const limit = Math.min(Math.max(Number(queryString.limit) || 10, 1), 100);
-  const offset = (page - 1) * limit;
-
-  values.push(limit, offset);
+const findByUser = async (userId, queryString) => {
   const result = await db.query(
-    `SELECT *
-     FROM trips
-     WHERE ${where.join(" AND ")}
-     ORDER BY ${orderBy}
-     LIMIT $${values.length - 1} OFFSET $${values.length}`,
-    values
+    "SELECT * FROM trips WHERE user_id = $1 ORDER BY created_at DESC",
+    [userId]
   );
-
   return result.rows.map(mapTrip);
 };
 
 const findByIdForUser = async (tripId, userId) => {
-  const result = await db.query("SELECT * FROM trips WHERE id = $1 AND user_id = $2", [tripId, userId]);
+  const result = await db.query(
+    "SELECT * FROM trips WHERE id = $1 AND user_id = $2",
+    [tripId, userId]
+  );
   return mapTrip(result.rows[0]);
 };
 
 const updateForUser = async (tripId, userId, payload) => {
-  const fieldMap = {
-    title: "title",
-    destination: "destination",
-    description: "description",
-    startDate: "start_date",
-    endDate: "end_date",
-    budget: "budget",
-    coverImage: "cover_image"
-  };
-  const fields = [];
-  const values = [];
-
-  Object.entries(fieldMap).forEach(([key, column]) => {
-    if (payload[key] !== undefined) {
-      values.push(payload[key]);
-      fields.push(`${column} = $${values.length}`);
-    }
-  });
-
-  if (fields.length === 0) {
-    return findByIdForUser(tripId, userId);
-  }
-
-  values.push(tripId, userId);
   const result = await db.query(
-    `UPDATE trips
-     SET ${fields.join(", ")}, updated_at = CURRENT_TIMESTAMP
-     WHERE id = $${values.length - 1} AND user_id = $${values.length}
+    `UPDATE trips 
+     SET title = COALESCE($1, title), 
+         destination = COALESCE($2, destination), 
+         description = COALESCE($3, description), 
+         start_date = COALESCE($4, start_date), 
+         end_date = COALESCE($5, end_date), 
+         budget = COALESCE($6, budget), 
+         cover_image = COALESCE($7, cover_image), 
+         updated_at = NOW() 
+     WHERE id = $8 AND user_id = $9 
      RETURNING *`,
-    values
+    [
+      payload.title ?? null,
+      payload.destination ?? null,
+      payload.description ?? null,
+      payload.startDate ?? null,
+      payload.endDate ?? null,
+      payload.budget ?? null,
+      payload.coverImage ?? null,
+      tripId,
+      userId
+    ]
   );
-
   return mapTrip(result.rows[0]);
 };
 
 const deleteForUser = async (tripId, userId) => {
-  const result = await db.query("DELETE FROM trips WHERE id = $1 AND user_id = $2 RETURNING *", [tripId, userId]);
+  const result = await db.query(
+    "DELETE FROM trips WHERE id = $1 AND user_id = $2 RETURNING *",
+    [tripId, userId]
+  );
   return mapTrip(result.rows[0]);
 };
 
@@ -136,6 +97,5 @@ module.exports = {
   findByUser,
   findByIdForUser,
   updateForUser,
-  deleteForUser,
-  mapTrip
+  deleteForUser
 };

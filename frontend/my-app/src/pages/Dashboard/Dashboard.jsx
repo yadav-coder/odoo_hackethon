@@ -50,10 +50,14 @@ export default function Dashboard() {
 
   useEffect(() => {
     let alive = true
-    setPreviousTripsLoading(true)
-    setPreviousTripsError('')
 
-    fetchPreviousTrips()
+    Promise.resolve()
+      .then(() => {
+        if (!alive) return []
+        setPreviousTripsLoading(true)
+        setPreviousTripsError('')
+        return fetchPreviousTrips()
+      })
       .then((res) => {
         if (!alive) return
         setPreviousTrips(res)
@@ -74,12 +78,16 @@ export default function Dashboard() {
 
   useEffect(() => {
     let alive = true
-    setDestinationsLoading(true)
-    setDestinationsError('')
 
-    fetchDestinations(filters)
+    Promise.resolve()
+      .then(() => {
+        if (!alive) return null
+        setDestinationsLoading(true)
+        setDestinationsError('')
+        return fetchDestinations(filters)
+      })
       .then((res) => {
-        if (!alive) return
+        if (!alive || !res) return
         setDestinationsMeta(res.meta)
         setDestinationGroups(res.groups || null)
         setDestinations((prev) => (filters.page === 1 ? res.items : [...prev, ...res.items]))
@@ -102,7 +110,8 @@ export default function Dashboard() {
   }, [filters])
 
   useEffect(() => {
-    setPage(1)
+    const id = requestAnimationFrame(() => setPage(1))
+    return () => cancelAnimationFrame(id)
   }, [debouncedCountry, groupBy, sortBy, sortDir, minRating, maxBudget])
 
   const onPlanNewTrip = () => {
@@ -180,10 +189,10 @@ export default function Dashboard() {
               onChange={(e) => setMaxBudget(e.target.value)}
             >
               <option value="">Any</option>
-              <option value="500">≤ {formatCurrency(500)}</option>
-              <option value="1000">≤ {formatCurrency(1000)}</option>
-              <option value="2000">≤ {formatCurrency(2000)}</option>
-              <option value="3000">≤ {formatCurrency(3000)}</option>
+              <option value="500">Up to {formatCurrency(500)}</option>
+              <option value="1000">Up to {formatCurrency(1000)}</option>
+              <option value="2000">Up to {formatCurrency(2000)}</option>
+              <option value="3000">Up to {formatCurrency(3000)}</option>
             </select>
           </div>
 
@@ -200,7 +209,7 @@ export default function Dashboard() {
               >
                 <option value="rating">Rating</option>
                 <option value="budget">Price</option>
-                <option value="name">A–Z</option>
+                <option value="name">A-Z</option>
               </select>
               <select
                 aria-label="Sort direction"
@@ -277,7 +286,7 @@ export default function Dashboard() {
               disabled={destinationsLoading}
               onClick={() => setPage((p) => p + 1)}
             >
-              {destinationsLoading ? 'Loading…' : 'Load more'}
+              {destinationsLoading ? 'Loading...' : 'Load more'}
             </button>
           ) : (
             <p className="dash__mutedSmall">

@@ -2,7 +2,7 @@ const Note = require("../models/noteModel");
 
 const createNote = async (req, res, next) => {
   try {
-    const note = await Note.create(req.user._id, req.body);
+    const note = await Note.create(req.user.id, req.body);
     res.status(201).json({ success: true, note });
   } catch (error) {
     next(error);
@@ -11,7 +11,7 @@ const createNote = async (req, res, next) => {
 
 const getNotes = async (req, res, next) => {
   try {
-    const notes = await Note.findByUser(req.user._id, req.query.trip);
+    const notes = await Note.findByUser(req.user.id, req.query.trip);
     res.status(200).json({ success: true, count: notes.length, notes });
   } catch (error) {
     next(error);
@@ -20,7 +20,7 @@ const getNotes = async (req, res, next) => {
 
 const updateNote = async (req, res, next) => {
   try {
-    const note = await Note.updateForUser(req.params.id, req.user._id, req.body);
+    const note = await Note.updateForUser(req.params.id, req.user.id, req.body);
 
     if (!note) {
       res.status(404).json({ success: false, message: "Trip note not found" });
@@ -35,7 +35,7 @@ const updateNote = async (req, res, next) => {
 
 const deleteNote = async (req, res, next) => {
   try {
-    const note = await Note.deleteForUser(req.params.id, req.user._id);
+    const note = await Note.deleteForUser(req.params.id, req.user.id);
 
     if (!note) {
       res.status(404).json({ success: false, message: "Trip note not found" });

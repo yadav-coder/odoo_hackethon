@@ -2,7 +2,7 @@ const PackingItem = require("../models/packingModel");
 
 const createItem = async (req, res, next) => {
   try {
-    const item = await PackingItem.create(req.user._id, req.body);
+    const item = await PackingItem.create(req.user.id, req.body);
     res.status(201).json({ success: true, item });
   } catch (error) {
     next(error);
@@ -11,7 +11,7 @@ const createItem = async (req, res, next) => {
 
 const getItems = async (req, res, next) => {
   try {
-    const items = await PackingItem.findByUser(req.user._id, req.query.trip);
+    const items = await PackingItem.findByUser(req.user.id, req.query.trip);
     const packed = items.filter((item) => item.packed).length;
     res.status(200).json({ success: true, count: items.length, packed, items });
   } catch (error) {
@@ -21,7 +21,7 @@ const getItems = async (req, res, next) => {
 
 const updateItem = async (req, res, next) => {
   try {
-    const item = await PackingItem.updateForUser(req.params.id, req.user._id, req.body);
+    const item = await PackingItem.updateForUser(req.params.id, req.user.id, req.body);
 
     if (!item) {
       res.status(404).json({ success: false, message: "Packing item not found" });
@@ -36,7 +36,7 @@ const updateItem = async (req, res, next) => {
 
 const deleteItem = async (req, res, next) => {
   try {
-    const item = await PackingItem.deleteForUser(req.params.id, req.user._id);
+    const item = await PackingItem.deleteForUser(req.params.id, req.user.id);
 
     if (!item) {
       res.status(404).json({ success: false, message: "Packing item not found" });

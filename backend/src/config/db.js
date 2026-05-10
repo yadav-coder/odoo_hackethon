@@ -4,7 +4,10 @@ const logger = require("../utils/logger");
 const getDbConfig = () => {
   if (process.env.DATABASE_URL) {
     return {
-      connectionString: process.env.DATABASE_URL
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.NODE_ENV === "production" 
+        ? { rejectUnauthorized: false } 
+        : false
     };
   }
 
@@ -52,4 +55,3 @@ module.exports = {
   query: (text, params) => pool.query(text, params),
   pool
 };
-

@@ -1,130 +1,119 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(150) NOT NULL,
-    first_name VARCHAR(100) DEFAULT '',
-    last_name VARCHAR(100) DEFAULT '',
-    email VARCHAR(150) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    phone VARCHAR(20) DEFAULT '',
-    city VARCHAR(100) DEFAULT '',
-    country VARCHAR(100) DEFAULT '',
-    avatar TEXT DEFAULT '',
-    role VARCHAR(20) DEFAULT 'user',
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(255) NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    phone VARCHAR(20),
+    city VARCHAR(100),
+    country VARCHAR(100),
+    avatar TEXT,
+    role VARCHAR(50) DEFAULT 'user',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-ALTER TABLE users ADD COLUMN IF NOT EXISTS first_name VARCHAR(100) DEFAULT '';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS last_name VARCHAR(100) DEFAULT '';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20) DEFAULT '';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS city VARCHAR(100) DEFAULT '';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS country VARCHAR(100) DEFAULT '';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar TEXT DEFAULT '';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'user';
 
 CREATE TABLE IF NOT EXISTS trips (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
     title VARCHAR(255) NOT NULL,
     destination VARCHAR(255) NOT NULL,
-    description TEXT DEFAULT '',
+    description TEXT,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    budget NUMERIC(10,2) DEFAULT 0,
-    cover_image TEXT DEFAULT '',
+    budget NUMERIC(10, 2) DEFAULT 0,
+    cover_image TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-ALTER TABLE trips ADD COLUMN IF NOT EXISTS title VARCHAR(255);
-ALTER TABLE trips ADD COLUMN IF NOT EXISTS description TEXT DEFAULT '';
-ALTER TABLE trips ADD COLUMN IF NOT EXISTS cover_image TEXT DEFAULT '';
-ALTER TABLE trips ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
 CREATE TABLE IF NOT EXISTS itineraries (
-    id SERIAL PRIMARY KEY,
-    trip_id INT REFERENCES trips(id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    trip_id UUID REFERENCES trips(id) ON DELETE CASCADE,
     title VARCHAR(255) NOT NULL,
-    location VARCHAR(255) DEFAULT '',
-    notes TEXT DEFAULT '',
+    location TEXT,
+    notes TEXT,
     date DATE NOT NULL,
-    start_time VARCHAR(20) DEFAULT '',
-    end_time VARCHAR(20) DEFAULT '',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS expenses (
-    id SERIAL PRIMARY KEY,
-    trip_id INT REFERENCES trips(id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    title VARCHAR(255) NOT NULL,
-    amount NUMERIC(10,2) NOT NULL,
-    category VARCHAR(100) DEFAULT 'other',
-    date DATE DEFAULT CURRENT_DATE,
-    note TEXT DEFAULT '',
+    start_time TIME,
+    end_time TIME,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS packing_items (
-    id SERIAL PRIMARY KEY,
-    trip_id INT REFERENCES trips(id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    trip_id UUID REFERENCES trips(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     category VARCHAR(100) DEFAULT 'other',
-    quantity VARCHAR(100) DEFAULT '',
-    packed BOOLEAN DEFAULT FALSE,
+    quantity VARCHAR(50),
+    packed BOOLEAN DEFAULT false,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS trip_notes (
-    id SERIAL PRIMARY KEY,
-    trip_id INT REFERENCES trips(id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    trip_id UUID REFERENCES trips(id) ON DELETE CASCADE,
     title VARCHAR(255) NOT NULL,
-    content TEXT DEFAULT '',
-    note_date DATE DEFAULT CURRENT_DATE,
+    content TEXT,
+    note_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS expenses (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    trip_id UUID REFERENCES trips(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    amount NUMERIC(10, 2) NOT NULL,
+    category VARCHAR(100) DEFAULT 'other',
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    note TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS community_posts (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    trip_id INT REFERENCES trips(id) ON DELETE SET NULL,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    trip_id UUID REFERENCES trips(id) ON DELETE SET NULL,
     title VARCHAR(255) NOT NULL,
-    content TEXT DEFAULT '',
-    city VARCHAR(100) DEFAULT '',
-    country VARCHAR(100) DEFAULT '',
+    content TEXT,
+    city VARCHAR(100),
+    country VARCHAR(100),
     category VARCHAR(100) DEFAULT 'travel',
-    image_url TEXT DEFAULT '',
+    image_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS invoices (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     invoice_number VARCHAR(100) UNIQUE NOT NULL,
-    trip_id INT REFERENCES trips(id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    trip_id UUID REFERENCES trips(id) ON DELETE SET NULL,
     status VARCHAR(50) DEFAULT 'pending',
-    subtotal NUMERIC(10,2) DEFAULT 0,
-    tax NUMERIC(10,2) DEFAULT 0,
-    discount NUMERIC(10,2) DEFAULT 0,
-    total NUMERIC(10,2) DEFAULT 0,
+    subtotal NUMERIC(10, 2) DEFAULT 0,
+    tax NUMERIC(10, 2) DEFAULT 0,
+    discount NUMERIC(10, 2) DEFAULT 0,
+    total NUMERIC(10, 2) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS invoice_items (
-    id SERIAL PRIMARY KEY,
-    invoice_id INT REFERENCES invoices(id) ON DELETE CASCADE,
-    description TEXT NOT NULL,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    invoice_id UUID REFERENCES invoices(id) ON DELETE CASCADE,
+    description VARCHAR(255) NOT NULL,
     category VARCHAR(100) DEFAULT 'travel',
-    quantity NUMERIC(10,2) DEFAULT 1,
-    unit_cost NUMERIC(10,2) DEFAULT 0,
-    amount NUMERIC(10,2) DEFAULT 0
+    quantity NUMERIC(10, 2) DEFAULT 1,
+    unit_cost NUMERIC(10, 2) DEFAULT 0,
+    amount NUMERIC(10, 2) DEFAULT 0
 );

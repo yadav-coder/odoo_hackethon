@@ -8,12 +8,7 @@ const updateProfile = async (req, res, next) => {
   try {
     const payload = {
       name: req.body.name,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      phone: req.body.phone,
-      city: req.body.city,
-      country: req.body.country
+      email: req.body.email
     };
 
     if (req.file) {
@@ -22,7 +17,12 @@ const updateProfile = async (req, res, next) => {
 
     Object.keys(payload).forEach((key) => payload[key] === undefined && delete payload[key]);
 
-    const user = await User.updateById(req.user._id, payload);
+    const user = await User.updateProfile(req.user.id, payload);
+
+    if (!user) {
+      res.status(404).json({ success: false, message: "User not found" });
+      return;
+    }
 
     res.status(200).json({ success: true, user });
   } catch (error) {
@@ -34,4 +34,3 @@ module.exports = {
   getProfile,
   updateProfile
 };
-

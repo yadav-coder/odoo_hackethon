@@ -41,9 +41,17 @@ const create = async ({ name, firstName, lastName, email, password, phone, city,
     `INSERT INTO users (name, first_name, last_name, email, password, phone, city, country)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
      RETURNING *`,
-    [name, firstName || "", lastName || "", email, hashedPassword, phone || "", city || "", country || ""]
+    [
+      name ?? null,
+      firstName ?? null,
+      lastName ?? null,
+      email ?? null,
+      hashedPassword,
+      phone ?? null,
+      city ?? null,
+      country ?? null
+    ]
   );
-
   return mapUser(result.rows[0]);
 };
 
@@ -52,47 +60,30 @@ const findById = async (id) => {
   return mapUser(result.rows[0]);
 };
 
-const updateById = async (id, payload) => {
+const updateProfile = async (id, payload) => {
   const fields = [];
   const values = [];
+  let query = "UPDATE users SET ";
 
-  const fieldMap = {
-    name: "name",
-    firstName: "first_name",
-    lastName: "last_name",
-    email: "email",
-    phone: "phone",
-    city: "city",
-    country: "country",
-    avatar: "avatar"
-  };
-
-  Object.entries(fieldMap).forEach(([key, column]) => {
-    if (payload[key] !== undefined) {
-      values.push(payload[key]);
-      fields.push(`${column} = $${values.length}`);
-    }
-  });
-
-  if (fields.length === 0) {
-    return findById(id);
+  let i = 1;
+  for (const [key, value] of Object.entries(payload)) {
+    fields.push(`${key} = $${i}`);
+    values.push(value);
+    i++;
   }
 
-  values.push(id);
-  const result = await db.query(
-    `UPDATE users
-     SET ${fields.join(", ")}, updated_at = CURRENT_TIMESTAMP
-     WHERE id = $${values.length}
-     RETURNING *`,
-    values
-  );
+  if (fields.length === 0) return findById(id);
 
+  query += fields.join(", ") + `, updated_at = NOW() WHERE id = $${i} RETURNING *`;
+  values.push(id);
+
+  const result = await db.query(query, values);
   return mapUser(result.rows[0]);
 };
 
 module.exports = {
-  create,
   findByEmail,
+  create,
   findById,
-  updateById
+  updateProfile
 };

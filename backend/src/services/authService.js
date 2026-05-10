@@ -31,7 +31,7 @@ const registerUser = async ({ name, firstName, lastName, email, password, phone,
 
   return {
     user,
-    token: generateToken(user._id)
+    token: generateToken(user.id || user._id)
   };
 };
 
@@ -46,7 +46,7 @@ const loginUser = async ({ email, password }) => {
 
   return {
     user,
-    token: generateToken(user._id)
+    token: generateToken(user.id || user._id)
   };
 };
 
@@ -54,4 +54,3 @@ module.exports = {
   registerUser,
   loginUser
 };
-

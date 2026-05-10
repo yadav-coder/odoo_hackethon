@@ -39,13 +39,13 @@ const create = async (userId, payload) => {
      RETURNING *`,
     [
       userId,
-      payload.trip,
-      payload.title,
+      payload.trip ?? null,
+      payload.title ?? null,
       payload.location || "",
       payload.notes || "",
-      payload.date,
-      payload.startTime || "",
-      payload.endTime || ""
+      payload.date ?? null,
+      payload.startTime || null,
+      payload.endTime || null
     ]
   );
 

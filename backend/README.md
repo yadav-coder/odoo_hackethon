@@ -18,7 +18,13 @@ Server application source lives here.
 
 ## Database
 
-Set `DATABASE_URL` to your PostgreSQL connection string and run `database/schema.sql` before starting the API.
+Set `DATABASE_URL` to your PostgreSQL connection string, keep `SKIP_DB=false`, then initialize the schema:
+
+```bash
+npm run db:init
+```
+
+After that, start the API with `npm run dev`.
 
 ## API Areas
 
