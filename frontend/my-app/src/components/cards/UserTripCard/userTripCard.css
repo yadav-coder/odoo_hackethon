@@ -1,0 +1,148 @@
+.utcard {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.22);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    border-color 140ms ease;
+  display: grid;
+  grid-template-rows: 160px 1fr;
+}
+
+.utcard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 112, 191, 0.28);
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.5);
+}
+
+.utcard__media {
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.utcard__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.02);
+}
+
+.utcard__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.82));
+}
+
+.utcard__status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: capitalize;
+  backdrop-filter: blur(8px);
+}
+
+.utcard__status--ongoing {
+  border-color: rgba(255, 112, 191, 0.24);
+  background: rgba(255, 112, 191, 0.14);
+}
+
+.utcard__status--upcoming {
+  border-color: rgba(131, 28, 145, 0.28);
+  background: rgba(131, 28, 145, 0.18);
+}
+
+.utcard__status--completed {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.utcard__body {
+  padding: 12px 12px 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.utcard__title {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.93);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.utcard__sub {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.utcard__facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.utcard__fact {
+  display: grid;
+  gap: 4px;
+}
+
+.utcard__k {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.56);
+}
+
+.utcard__v {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 650;
+}
+
+.utcard__summary {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.7);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.utcard__btn {
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.22);
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    background 120ms ease;
+}
+
+.utcard__btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 112, 191, 0.12);
+}
+
+@media (max-width: 640px) {
+  .utcard__facts {
+    grid-template-columns: 1fr;
+  }
+}
+

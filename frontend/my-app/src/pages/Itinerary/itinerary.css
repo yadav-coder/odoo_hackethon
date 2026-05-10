@@ -1,0 +1,112 @@
+.itin {
+  min-height: 100svh;
+}
+
+.itin__main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 18px 16px 28px;
+  display: grid;
+  gap: 14px;
+}
+
+.itin__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.itin__title {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+}
+
+.itin__sub {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.64);
+}
+
+.itin__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.itin__btn {
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, #831c91, #ff70bf);
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 650;
+  cursor: pointer;
+  box-shadow: 0 16px 26px rgba(0, 0, 0, 0.42);
+}
+
+.itin__btn--ghost {
+  background: rgba(0, 0, 0, 0.22);
+  box-shadow: none;
+}
+
+.itin__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.itin__list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.itin__error {
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 112, 191, 0.25);
+  background: rgba(0, 0, 0, 0.25);
+  display: grid;
+  gap: 12px;
+}
+
+.itin__errorText {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.itin__errorActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1024px) {
+  .itin__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .itin__head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .itin__actions {
+    width: 100%;
+  }
+
+  .itin__btn {
+    width: 100%;
+  }
+
+  .itin__list {
+    grid-template-columns: 1fr;
+  }
+}
+

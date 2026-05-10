@@ -1,0 +1,89 @@
+.prevtrips {
+  min-height: 100svh;
+  background: radial-gradient(circle at top left, rgba(255, 112, 191, 0.12), transparent 25%),
+    radial-gradient(circle at bottom right, rgba(131, 28, 145, 0.12), transparent 20%),
+    linear-gradient(180deg, #0c081c 0%, #0f0b24 100%);
+}
+
+.prevtrips__main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 22px 16px 32px;
+  display: grid;
+  gap: 22px;
+}
+
+.prevtrips__hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.prevtrips__kicker {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.prevtrips__title {
+  margin: 8px 0 0;
+  font-size: clamp(2rem, 2.5vw, 2.5rem);
+  color: #fff;
+}
+
+.prevtrips__subtitle {
+  margin: 14px 0 0;
+  max-width: 560px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+}
+
+.prevtrips__overview {
+  text-align: right;
+}
+
+.prevtrips__overviewLabel {
+  display: block;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.64);
+}
+
+.prevtrips__overviewValue {
+  display: block;
+  margin-top: 6px;
+  font-size: 32px;
+  color: #fff;
+}
+
+.prevtrips__grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.prevtrips__empty,
+.prevtrips__error {
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.22);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+@media (max-width: 760px) {
+  .prevtrips__hero {
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .prevtrips__overview {
+    text-align: left;
+  }
+}

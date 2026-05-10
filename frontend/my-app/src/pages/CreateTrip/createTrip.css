@@ -1,0 +1,119 @@
+.createTrip {
+  min-height: 100svh;
+}
+
+.createTrip__main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 18px 16px 28px;
+  display: grid;
+  grid-template-columns: 520px 1fr;
+  gap: 18px;
+}
+
+.createTrip__right {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.12);
+  padding: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.createTrip__sectionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.createTrip__h2 {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+}
+
+.createTrip__muted {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.createTrip__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.createTrip__error {
+  margin: 10px 0 14px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 112, 191, 0.25);
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.createTrip__errorText {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.createTrip__retry {
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, #462c7d, #ff70bf);
+  color: rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+  padding: 0 12px;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.28);
+  color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  max-width: min(520px, 92vw);
+}
+
+.toast--success {
+  border-color: rgba(255, 112, 191, 0.28);
+  box-shadow: 0 18px 40px rgba(131, 28, 145, 0.18);
+}
+
+.toast--error {
+  border-color: rgba(255, 112, 191, 0.35);
+}
+
+@media (max-width: 1024px) {
+  .createTrip__main {
+    grid-template-columns: 1fr;
+  }
+
+  .createTrip__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .createTrip__sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .createTrip__grid {
+    grid-template-columns: 1fr;
+  }
+}
