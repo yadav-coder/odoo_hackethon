@@ -1,0 +1,195 @@
+.login {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(900px 520px at 20% 10%, rgba(255, 112, 191, 0.24), transparent 55%),
+    radial-gradient(820px 520px at 75% 0%, rgba(213, 82, 163, 0.22), transparent 55%),
+    radial-gradient(900px 700px at 50% 120%, rgba(131, 28, 145, 0.25), transparent 55%),
+    linear-gradient(180deg, rgba(70, 44, 125, 0.92), rgba(18, 10, 30, 0.92));
+  filter: saturate(1.05);
+}
+
+.login__frame {
+  position: absolute;
+  inset: 24px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.42);
+}
+
+.login__card {
+  width: min(420px, 92vw);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(12, 8, 20, 0.62);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(255, 112, 191, 0.07) inset;
+  padding: 26px 26px 22px;
+  position: relative;
+  z-index: 1;
+}
+
+.login__header {
+  text-align: center;
+}
+
+.login__eyebrow {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.login__title {
+  margin: 10px 0 0;
+  font-size: 28px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.login__avatar {
+  width: 78px;
+  height: 78px;
+  border-radius: 999px;
+  margin: 18px auto 16px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 112, 191, 0.7), rgba(131, 28, 145, 0.9));
+  box-shadow:
+    0 12px 22px rgba(0, 0, 0, 0.45),
+    0 0 0 8px rgba(255, 255, 255, 0.03);
+  display: grid;
+  place-items: center;
+}
+
+.login__avatarInner {
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(12, 8, 20, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-size: 15px;
+}
+
+.login__form {
+  display: grid;
+  gap: 10px;
+}
+
+.login__label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.72);
+  margin-top: 6px;
+}
+
+.login__input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(0, 0, 0, 0.22);
+  color: rgba(255, 255, 255, 0.92);
+  outline: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 120ms ease;
+}
+
+.login__input::placeholder {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.login__input:focus {
+  border-color: rgba(255, 112, 191, 0.7);
+  box-shadow:
+    0 0 0 4px rgba(255, 112, 191, 0.14),
+    0 0 0 1px rgba(255, 112, 191, 0.18) inset;
+}
+
+.login__button {
+  margin-top: 10px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, #831c91, #ff70bf);
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 16px 26px rgba(0, 0, 0, 0.42);
+  transition:
+    transform 120ms ease,
+    filter 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.login__button:hover:enabled {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.5);
+}
+
+.login__button:active:enabled {
+  transform: translateY(0);
+  filter: brightness(0.98);
+}
+
+.login__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  filter: grayscale(0.15);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.35);
+}
+
+.login__hint {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+}
+
+.login__link {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.86);
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 112, 191, 0.65);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.login__link:hover {
+  color: rgba(255, 255, 255, 0.95);
+  text-decoration-color: rgba(255, 112, 191, 0.9);
+}
+
+@media (max-width: 420px) {
+  .login__card {
+    padding: 22px 18px 18px;
+  }
+}
